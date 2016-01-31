@@ -50,7 +50,7 @@ static globals     *pglobal;
 static pthread_mutex_t controls_mutex;
 
 static struct fb_var_screeninfo sc;
-static uint32_t effective_bytes_per_pixel;
+static uint8_t effective_bytes_per_pixel;
 static uint64_t fbsize;
 static uint8_t *fbbuf;
 
@@ -165,7 +165,7 @@ int input_init(input_parameter *param) {
 		fprintf(stderr, "error: failed to malloc fbbuf\n");
 		exit(EXIT_FAILURE);
 	}
-	encode_jpeg_init(sc, effective_bytes_per_pixel);
+	encode_jpeg_init(sc, effective_bytes_per_pixel, 75);
 
   IPRINT("delay.............: %i\n", delay);
 
@@ -236,7 +236,7 @@ void *worker_thread( void *arg ) {
 		uint32_t encoded_image_size;
 
 		read_fb(fbbuf, fbsize);
-		encoded_image=encode_jpeg(effective_bytes_per_pixel, fbbuf, &encoded_image_size);
+		encoded_image=encode_jpeg(fbbuf, &encoded_image_size);
 
     /* copy JPG picture to global buffer */
     pthread_mutex_lock( &pglobal->db );
